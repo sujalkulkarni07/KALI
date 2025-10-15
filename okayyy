@@ -1,0 +1,82 @@
+**Aim 1: Write a shell script to display a greeting message using variables.**
+
+#!/bin/bash
+# GREET THE USER USING ECHO COMMAND
+echo "welcome to the cyber security"
+
+**AIM 2:Create a script that uses loops to print numbers from 1 to 10.**
+
+#!/bin/bash
+# First method using for loop
+for i in {1..10}
+do
+  echo $i
+done
+
+# Second method using C-style for loop
+for ((i=1;i<=10;i++))
+do
+  echo $i
+done
+
+# Third method using while loop
+i=1
+while ((i<=10))
+do
+  echo $i
+  ((i++))
+done
+
+# Fourth method using while loop (another style)
+i=1
+while [ $i -lt 11 ]
+do
+  echo $i
+  i=$((i+1))
+done
+
+**Aim 3: Basic commands in Kali Linux.**
+
+ls
+pwd
+cat filename.txt
+rm -rf directoryname
+echo "Your string" >> file.txt
+mkdir foldername
+ifconfig
+ps -aux
+find / -type f -perm -4000 2>/dev/null
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
