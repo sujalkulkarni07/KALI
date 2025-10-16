@@ -1,10 +1,15 @@
-**Aim 1: Write a shell script to display a greeting message using variables.**
+***Aim 1: Write a shell script to display a greeting message using variables.***
 
 #!/bin/bash
 # GREET THE USER USING ECHO COMMAND
 echo "welcome to the cyber security"
 
-**AIM 2:Create a script that uses loops to print numbers from 1 to 10.**
+
+
+
+
+
+***AIM 2:Create a script that uses loops to print numbers from 1 to 10.**
 
 #!/bin/bash
 # First method using for loop
@@ -35,7 +40,13 @@ do
   i=$((i+1))
 done
 
-**Aim 3: Basic commands in Kali Linux.**
+
+
+
+
+
+
+***Aim 3: Basic commands in Kali Linux.***
 
 ls
 pwd
@@ -53,6 +64,62 @@ find / -type f -perm -4000 2>/dev/null
 
 
 
+[PRACTICAL - 2: Automating Directory Creation]
+***Aim: Write a script to automate the process of creating multiple directories.***
+Bash Script:
+#!/bin/bash
+echo "Enter the starting name of the directory:"
+read dir
+echo "Enter the number of directories to create:"
+read n
+for((i=1;i<=n;i++))
+do
+    if [ -d $dir$i ]; then
+        echo "Directory already exists"
+    else
+        mkdir $dir$i
+        echo "$dir$i created successfully"
+    fi
+done
+
+
+
+
+
+[PRACTICAL - 3: Executing Shell Scripts]
+***Aim: Experiment with different ways of executing shell scripts.***
+Bash Script:
+#!/bin/bash
+var="HELLO WORLD"
+echo $var
+
+
+
+
+
+[PRACTICAL - 4: Text Processing with grep]
+***Aim: Practice text processing by writing a script to search for a specific pattern in a file using grep.***
+Bash Script:
+#!/bin/bash
+echo "Enter the file to search:"
+read file
+echo "Enter the word to search:"
+read x
+echo
+echo "Matching word"
+grep -w $x $file
+echo
+echo "Ignore"
+grep -i $x $file
+echo
+echo "Line number"
+grep -n $x $file
+echo
+echo "Recursive"
+grep -r $x
+echo
+echo "Count"
+grep -c -i $x $file
 
 
 
@@ -60,6 +127,53 @@ find / -type f -perm -4000 2>/dev/null
 
 
 
+[PRACTICAL - 5: Using Functions]
+***Aim: Write a script that demonstrates the use of functions to perform repetitive tasks.***
+Bash Script (prac5.sh):
+#!/bin/bash
+Print_Line() {
+    echo "-----------------------------------"
+}
+
+disk_usage() {
+    X=$(free -mt | grep 'Total' | awk '{print $4}')
+    echo "Disk Usage: $X"
+}
+
+echo "output"
+Print_Line
+disk_usage
+
+
+
+
+
+[PRACTICAL - 6.1: Monitoring System Resources]
+***Aim: Write a script to monitor CPU usage and send an alert if it exceeds a certain threshold. (The provided code focuses on RAM usage, so the script is for RAM monitoring.)***
+Bash Script (RAM Monitoring):
+The original code snippet was:
+a=$(free -mt | grep 'Total' | awk '{print $4}')
+Ram=3820
+if [ $a -lt $Ram ]
+then;
+echo "Ram running low: $a"
+else
+echo "Ram running high:"
+fi
+
+->THIS IS THE EDITED ONE BY GEMINI AS IT SAID THE CODE IN OUR PROJECT WAS WRONG !!
+#!/bin/bash
+# Note: The original script used a variable 'a' and a hardcoded threshold 'Ram-3820'.
+# The corrected script uses descriptive variable names 'FREE_SPACE' and 'TH'.
+
+FREE_SPACE=$(free -mt | grep 'Total' | awk '{print $4}')
+TH=3820 # Threshold in MB
+
+if [[ $FREE_SPACE -lt $TH ]]; then
+    echo "RAM Is Running Low"
+else
+    echo "RAM Is Sufficient"
+fi
 
 
 
@@ -67,16 +181,113 @@ find / -type f -perm -4000 2>/dev/null
 
 
 
+[PRACTICAL - 6.2: Backup and Restore Scripts]
+***Aim: Create backup and restore scripts for critical system files and directories.***
+Backup Script
+Bash Script (prac6_1.sh):
+#!/bin/bash
+a="/backup" # backup directory
+b="/etc"    # source directory
+
+mkdir -p "$a"
+tar -czf "$a/etc_backup.tar.gz" "$b" # -c (create), -z (gzip), -f (file)
+echo "Backup Completed"
+
+RESTORE SCRIPT: 
+#!/bin/bash
+c="/backup/etc_backup.tar.gz" # Path to the backup file
+
+if [ -f "$c" ]; then
+    # -x (extract), -z (gzip), -f (file), -C/ (change directory to root before extract)
+    tar -xzf "$c" -C/ 
+    echo "Backup completed successfully"
+else
+    echo "Backup not completed (File not found)"
+fi
 
 
 
 
 
 
+[PRACTICAL - 7: Custom System Administration Script (User Management)]
+***Aim: Design custom scripts tailored to specific system administration tasks in your environment. (The script provided performs user creation.)***
+Bash Script (prac7.sh):
+#!/bin/bash
+# Check for root user
+if [ "$(id -u)" -ne 0 ]; then
+    echo "Please enter as root user"
+    exit 1
+fi
+
+read -p "enter a username: " username
+
+# Check if username already exists
+if id "$username" &>/dev/null; then
+    echo "username '$username' already exists"
+    exit 1
+fi
+
+# Create user, set password to 'Password', and force password change on next login
+useradd -m -s /bin/bash "$username" # -m creates home directory, -s sets shell
+echo "Password" | passwd --stdin "$username"
+passwd -e "$username" # Force password change
+echo "user added Successfully"
 
 
 
 
 
 
+[PRACTICAL - 8: Interactive Scripting (Remote Execution)]
+***Aim: Build an interactive script that prompts users for input and performs actions accordingly. (The provided script is a remote command executor, taking the command as an argument.)***
+Bash Script (prac8.sh):
+#!/bin/bash
+host_file="host.txt"
+cmd="$1"
+ssh_opts="-o StrictHostKeyChecking=no -o ConnectTimeout=5" # Added timeout value as per explanation
 
+# Check if command argument is provided
+if [ -z "$cmd" ]; then
+    echo "Usage: $0 \"command\""
+    exit 1
+fi
+
+# Read hostnames from host.txt
+while IFS= read -r host; do
+    # Skip blank lines
+    [ -z "$host" ] && continue
+
+    echo ">>>>> $host"
+    # Execute command via SSH; print error if SSH fails
+    ssh $ssh_opts "$host" "$cmd" || echo "Error: $host"
+    echo
+done < "$host_file"
+
+
+
+
+
+
+[PRACTICAL - 9: Interactive Scripting (Menu-Driven)]
+***Aim: Build an interactive script that prompts users for input and performs actions accordingly.***
+Bash Script (prac9.sh):
+#!/bin/bash
+
+# Print the menu options
+echo "1) Show logged users:"
+echo "2) Show the date:"
+echo "3) Show available space:"
+echo "4) Exit"
+
+# Read user choice
+read -p "Enter your choice: " choice
+
+# Case statement to perform action based on choice
+case $choice in
+    1) whoami;; # Show current logged-in user [cite: 727]
+    2) date;;   # Show current date and time [cite: 728]
+    3) free -mt;; # Show available and used memory in MB [cite: 729, 730]
+    4) exit 0;; # Exit script successfully [cite: 731]
+    *) echo "Invalid choice. Please enter 1, 2, 3, or 4.";; # Default case for invalid input
+esac
